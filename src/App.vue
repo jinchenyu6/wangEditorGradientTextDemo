@@ -41,12 +41,7 @@ export default {
 
     let isGradientTextInputMenuShow = ref(false);
 
-    // 模拟 ajax 异步获取内容
-    onMounted(() => {
-      // setTimeout(() => {
-      //   valueHtml.value = "<p>模拟 Ajax 异步设置内容</p>";
-      // }, 1500);
-    });
+    onMounted(() => {});
 
     const toolbarConfig = {};
     toolbarConfig.insertKeys = {
@@ -64,18 +59,11 @@ export default {
 
     const handleCreated = (editor) => {
       editorRef.value = editor; // 记录 editor 实例，重要！
-      console.log(editor);
       editor.on("onClickGradientTextMenu", () => {
-        console.log(456);
         isGradientTextInputMenuShow.value = true;
       });
     };
-    const handelFocus = (editor) => {
-      // editor.restoreSelection();
-      console.log(editor.selection);
-      // editor.move(1);
-      // editor.move(1);
-    };
+    const handelFocus = (editor) => {};
 
     const htmlContent = ref("");
 
@@ -105,11 +93,15 @@ export default {
 };
 </script>    
 
-<style scoped>
+<style lang="scss" scoped>
 button {
   width: 200px;
   height: 60px;
   text-align: center;
-  line-height: 60px;
+  line-height: 40px;
+}
+textarea {
+  display: block;
+  width: 100%;
 }
 </style>

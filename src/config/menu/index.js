@@ -32,52 +32,52 @@ class GradientTextMenu {                       // JS 语法
     // exec(editor: IDomEditor, value: string | boolean) {   // TS 语法
     exec(editor, value) {                              // JS 语法
         // Modal menu ，这个函数不用写，空着即可
-        console.log('点击菜单')
-        editor.emit('onClickGradientTextMenu')
+        // console.log('点击菜单')
+        // editor.emit('onClickGradientTextMenu')
     }
 
     // 弹出框 modal 的定位：1. 返回某一个 SlateNode； 2. 返回 null （根据当前选区自动定位）
     // getModalPositionNode(editor: IDomEditor): SlateNode | null {  // TS 语法
-    // getModalPositionNode(editor) {                             // JS 语法
-    //     return null // modal 依据选区定位
-    // }
+    getModalPositionNode(editor) {                             // JS 语法
+        return null // modal 依据选区定位
+    }
 
     // 定义 modal 内部的 DOM Element
     // getModalContentElem(editor: IDomEditor): DOMElement {   // TS 语法
-    // getModalContentElem(editor) {                        // JS 语法
-    //     // 创建输入框
-    //     const input = document.createElement('input');
-    //     input.setAttribute('type', 'text');
+    getModalContentElem(editor) {                        // JS 语法
+        // 创建输入框
+        const input = document.createElement('input');
+        input.setAttribute('type', 'text');
 
-    //     // 创建按钮
-    //     const button = document.createElement('button');
-    //     button.textContent = '确定';
+        // 创建按钮
+        const button = document.createElement('button');
+        button.textContent = '确定';
 
-    //     // 点击按钮时获取输入框内容
-    //     button.addEventListener('click', function () {
-    //         const inputValue = input.value;
-    //         console.log('输入框内容：', inputValue);
-    //         // 在这里可以对输入框内容进行进一步处理
-    //         editor.restoreSelection()          // 恢复选区
-    //         // console.log('before', editor.selection)
-    //         editor.insertNode(createGradientText(inputValue))
-    //         editor.move(1)
-    //         // editor.insertText(' ') //处理插入渐变文本，直接blur,再focus后，渐变文本之后的光标丢失
-    //         // console.log('move', editor.selection)
-    //         editor.hidePanelOrModal()
-    //         // editor.normalizeNode('gradientText', editor.selection[0])
-    //     });
+        // 点击按钮时获取输入框内容
+        button.addEventListener('click', function () {
+            const inputValue = input.value;
+            console.log('输入框内容：', inputValue);
+            // 在这里可以对输入框内容进行进一步处理
+            editor.restoreSelection()          // 恢复选区
+            // console.log('before', editor.selection)
+            editor.insertNode(createGradientText(inputValue))
+            editor.move(1)
+            // editor.insertText(' ') //处理插入渐变文本，直接blur,再focus后，渐变文本之后的光标丢失
+            // console.log('move', editor.selection)
+            editor.hidePanelOrModal()
+            // editor.normalizeNode('gradientText', editor.selection[0])
+        });
 
-    //     // 创建一个包含输入框和按钮的 div 元素
-    //     const container = document.createElement('div');
-    //     container.appendChild(input);
-    //     container.appendChild(button);
+        // 创建一个包含输入框和按钮的 div 元素
+        const container = document.createElement('div');
+        container.appendChild(input);
+        container.appendChild(button);
 
 
-    //     return container // 返回 DOM Element 类型
+        return container // 返回 DOM Element 类型
 
-    //     // PS：也可以把 $content 缓存下来，这样不用每次重复创建、重复绑定事件，优化性能
-    // }
+        // PS：也可以把 $content 缓存下来，这样不用每次重复创建、重复绑定事件，优化性能
+    }
 }
 
 export const gradientTextMenuConf = {
