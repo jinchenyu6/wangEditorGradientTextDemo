@@ -40,6 +40,9 @@ export function withGradientText(editor) {                        // JS 语法
     //             at: insertPath // 在 link-card 后面插入
     //         });
     //     }
+
+
+    //     console.log(222)
     // };
 
 

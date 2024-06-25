@@ -1,9 +1,15 @@
 <template>
-  <GradientTextInputModal
-    v-if="isGradientTextInputMenuShow"
-    @close="closeGradientTextInputMenu"
-  ></GradientTextInputModal>
-  <div style="border: 1px solid #ccc">
+  <div class="rich-text-wrapper" style="border: 1px solid #ccc">
+    <GradientTextInputModal
+      v-if="isGradientTextInputMenuShow"
+      @close="closeGradientTextInputMenu"
+      @submit="handelSubmit"
+    ></GradientTextInputModal>
+    <GradientTextEditModal
+      v-if="isGradientTextEditMenuShow"
+      @close="closeGradientTextEditMenu"
+      @edit="showGradientTextInputMenuToEdit"
+    ></GradientTextEditModal>
     <Toolbar
       style="border-bottom: 1px solid #ccc"
       :editor="editorRef"
@@ -12,6 +18,7 @@
     />
     <Editor
       style="height: 500px; overflow-y: hidden"
+      id="editor"
       v-model="valueHtml"
       :defaultConfig="editorConfig"
       :mode="mode"
@@ -19,19 +26,29 @@
       @onFocus="handelFocus"
     />
   </div>
-  <button @click="getHtml">获取HTML</button>
+  <button @click="getHtml">GetHTML</button>
+  <button @click="setHtml">SetHTML</button>
   <textarea cols="30" rows="10" :value="htmlContent"></textarea>
 </template>
 
 <script>
 import "@wangeditor/editor/dist/css/style.css"; // 引入 css
 
-import { onBeforeUnmount, ref, shallowRef, onMounted } from "vue";
+import { onBeforeUnmount, ref, shallowRef, onMounted, reactive } from "vue";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
+import { createGradientText } from "@/utils/createElem/index.js";
+import { getNodes } from "@/utils/getNodes/index.js";
+import { setNode } from "@/utils/setNode/index.js";
+import { DomEditor } from "@wangeditor/core";
 import GradientTextInputModal from "@/components/gradientTextInputModal.vue";
-
+import GradientTextEditModal from "@/components/gradientTextEditModal.vue";
 export default {
-  components: { Editor, Toolbar, GradientTextInputModal },
+  components: {
+    Editor,
+    Toolbar,
+    GradientTextInputModal,
+    GradientTextEditModal,
+  },
   setup() {
     // 编辑器实例，必须用 shallowRef
     const editorRef = shallowRef();
@@ -40,6 +57,8 @@ export default {
     const valueHtml = ref("");
 
     let isGradientTextInputMenuShow = ref(false);
+    let isGradientTextEditMenuShow = ref(false);
+    let isEditing = ref(false);
 
     onMounted(() => {});
 
@@ -62,18 +81,83 @@ export default {
       editor.on("onClickGradientTextMenu", () => {
         isGradientTextInputMenuShow.value = true;
       });
+      editor.on("onClickGradientText", () => {
+        isGradientTextEditMenuShow.value = true;
+      });
+      //尝试监听编辑器左键点击 选区设置
+      document.getElementById("editor").addEventListener("click", (e) => {
+        hideModals();
+        //DomEditor.isSelectedVoidNode(editor)
+        if (DomEditor.getSelectedTextNode(editor) === null) {
+          setTimeout(() => {
+            editor.restoreSelection();
+            editor.move(1);
+          }, 0);
+        }
+      });
     };
+
     const handelFocus = (editor) => {};
+
+    const handelSubmit = (form) => {
+      if (isEditing.value) {
+        editGradientText(form);
+      } else {
+        createGradientTextByInput(form);
+      }
+    };
+
+    //生成渐变字体
+    const createGradientTextByInput = (form) => {
+      const { value = "", color1, color2 } = form;
+      let editor = editorRef.value;
+      //解决input渐变字体后 光标在前的bug
+      setTimeout(() => {
+        editor.restoreSelection();
+        editor.insertNode(createGradientText(value, color1, color2));
+        editor.move(1);
+      }, 0);
+      closeGradientTextInputMenu();
+    };
+
+    //编辑已经插入编辑器中的渐变字体
+    const editGradientText = (form) => {
+      setNode(editorRef.value, "gradientText", form);
+      closeGradientTextInputMenu();
+    };
+
+    //获取点击的渐变字体node
+    const getGradientTextNode = () => {
+      let nodes = getNodes(editorRef.value, "gradientText");
+      return nodes[0];
+    };
+    const showGradientTextInputMenuToEdit = () => {
+      isGradientTextInputMenuShow.value = true;
+      isGradientTextEditMenuShow.value = false;
+      isEditing.value = true;
+    };
+    //关闭modal
+    const closeGradientTextInputMenu = () => {
+      isGradientTextInputMenuShow.value = false;
+      editorRef.value.focus();
+    };
+    const closeGradientTextEditMenu = () => {
+      isGradientTextEditMenuShow.value = false;
+      isEditing.value = false;
+      editorRef.value.focus();
+    };
+    const hideModals = () => {
+      closeGradientTextInputMenu();
+      closeGradientTextEditMenu();
+    };
 
     const htmlContent = ref("");
 
     const getHtml = () => {
-      console.log(editorRef.value.getHtml());
       htmlContent.value = editorRef.value.getHtml();
     };
-
-    const closeGradientTextInputMenu = () => {
-      isGradientTextInputMenuShow.value = false;
+    const setHtml = () => {
+      editorRef.value.setHtml(htmlContent.value);
     };
 
     return {
@@ -84,16 +168,27 @@ export default {
       editorConfig,
       htmlContent,
       isGradientTextInputMenuShow,
+      isGradientTextEditMenuShow,
       handleCreated,
       getHtml,
+      setHtml,
       handelFocus,
+      handelSubmit,
       closeGradientTextInputMenu,
+      closeGradientTextEditMenu,
+      createGradientTextByInput,
+      editGradientText,
+      showGradientTextInputMenuToEdit,
     };
   },
 };
 </script>    
 
 <style lang="scss" scoped>
+.rich-text-wrapper {
+  border: 1px solid #ccc;
+  position: relative;
+}
 button {
   width: 200px;
   height: 60px;

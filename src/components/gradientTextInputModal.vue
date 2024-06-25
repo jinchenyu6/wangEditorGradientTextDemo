@@ -2,7 +2,7 @@
   <el-form :model="form" class="form">
     <el-icon class="close-button-wrapper" @click="onClose"><Close /></el-icon>
     <el-form-item label="文本">
-      <el-input v-model="form.content" placeholder="请输入..." clearable />
+      <el-input v-model="form.value" placeholder="请输入..." clearable />
     </el-form-item>
     <el-form-item label="Color1">
       <el-color-picker
@@ -18,6 +18,15 @@
         :predefine="predefineColors"
       />
     </el-form-item>
+    <el-form-item label="示例">
+      <span
+        class="sample-text"
+        :style="{
+          background: `linear-gradient(${form.color1}, ${form.color2}) text`,
+        }"
+        >{{ form.value }}</span
+      >
+    </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="onSubmit">确认</el-button>
     </el-form-item>
@@ -25,8 +34,9 @@
 </template>
 
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, defineEmits, toRaw } from "vue";
 import { Close } from "@element-plus/icons-vue";
+
 const predefineColors = ref([
   "#ff4500",
   "#ff8c00",
@@ -45,17 +55,20 @@ const predefineColors = ref([
 ]);
 
 const form = reactive({
-  content: "",
-  color1: "rgba(255, 69, 0, 0.68)",
-  color2: "rgba(30, 144, 255, 1)",
+  value: "",
+  color1: "rgb(255, 69, 0)",
+  color2: "rgb(255, 140, 0)",
 });
 
+const emits = defineEmits(["close", "submit"]);
+
 const onSubmit = () => {
-  console.log("submit!", form);
+  console.log("submit!");
+  emits("submit", toRaw(form));
 };
 
 const onClose = () => {
-  console.log("关闭");
+  emits("close");
 };
 </script>
 
@@ -63,13 +76,20 @@ const onClose = () => {
 <style lang="scss" scoped>
 .form {
   width: 310px;
-  height: 200px;
-  background-color: #f6f6f6;
+  height: auto;
+  background-color: rgb(251, 251, 251);
   border: 1px silver solid;
   padding: 20px;
-  position: relative;
+  position: absolute;
+  top: 40px;
+  left: 0;
+  z-index: 2;
   .el-input {
     --el-input-width: 220px;
+  }
+  .sample-text {
+    color: transparent;
+    font-size: 20px;
   }
   .close-button-wrapper {
     width: 16px;

@@ -9,10 +9,10 @@ import { SlateElement } from '@wangeditor/editor'
 function gradientTextToHtml(elem, childrenHtml) {                             // JS 语法
 
     // 获取附件元素的数据
-    const { value } = elem
+    const { value, color1, color2 } = elem
 
     // 生成 HTML 代码
-    const html = `<span data-w-e-type="gradientText" data-w-e-is-void data-w-e-is-inline data-value="${value}" style="background: linear-gradient(rgb(102, 102, 102), rgb(254, 171, 58)) text; color: transparent;">${value}</span>`
+    const html = `<span data-w-e-type="gradientText" data-w-e-is-void data-w-e-is-inline data-value="${value}" data-color1="${color1}" data-color2="${color2}" style="background: linear-gradient(${color1}, ${color2}) text; color: transparent;">${value}</span>`
 
     return html
 }
