@@ -1,7 +1,10 @@
-# Vue 3 + Vite
+# wangeditor
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## 向富文本编辑器中插入渐变颜色字体
 
-## Recommended IDE Setup
-
-- [VS Code](https://code.visualstudio.com/) + [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (previously Volar) and disable Vetur
+实现如下：
+向富文本编辑器中插入渐变颜色字体；
+将其转换输出HTML；
+解析转换的HTML到编辑器；
+解决插入渐变颜色字体后的选区与光标问题；
+点击渐变字体可以实现重新编辑功能（暂未加入数据回显）
